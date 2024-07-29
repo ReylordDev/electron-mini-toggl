@@ -177,6 +177,17 @@ app.whenReady().then(() => {
     );
     menu.append(
       new MenuItem({
+        label: "Resizable",
+        type: "checkbox",
+        checked: mainWindow.isResizable(),
+        click: () => {
+          // Not sure how this behaves. According to the docs, making a transparent window resizable may cause it to stop working on some platforms.
+          mainWindow.setResizable(!mainWindow.isResizable());
+        },
+      }),
+    );
+    menu.append(
+      new MenuItem({
         label: "Restart",
         click: () => {
           app.relaunch();

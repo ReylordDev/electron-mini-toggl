@@ -2,7 +2,7 @@
   "name": "electron-mini-toggl",
   "productName": "electron-mini-toggl",
   "version": "0.0.1",
-  "description": "An Electron mini-player for Toggl",
+  "description": "Toggl Mini Player",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
