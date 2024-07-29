@@ -1,4 +1,4 @@
-import { ModelsTimeEntry, ModelsProject } from "../src/toggl";
+import { TimeEntry, Project } from "../src/toggl";
 
 /**
  * This is the main-window renderer file.
@@ -6,10 +6,10 @@ import { ModelsTimeEntry, ModelsProject } from "../src/toggl";
 
 const timeEntryUpdateInterval = 5000; // Update the current time entry every 5 seconds
 let seconds = 0;
-let currentEntry: ModelsTimeEntry = null;
-let currentProject: ModelsProject = null;
-let allProjects: ModelsProject[] = []; // List used for getting the project names by id
-const previousEntries: ModelsTimeEntry[] = []; // List used for the dropdown
+let currentEntry: TimeEntry = null;
+let currentProject: Project = null;
+let allProjects: Project[] = []; // List used for getting the project names by id
+const previousEntries: TimeEntry[] = []; // List used for the dropdown
 
 const currentDisplayElement = document.getElementById("current-entry-display");
 const currentDescriptionElement = document.getElementById(

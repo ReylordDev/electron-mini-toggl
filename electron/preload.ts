@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from "electron";
-import { ModelsTimeEntry } from "../src/toggl";
+import { TimeEntry } from "../src/toggl";
 
 // Expose protected methods that allow the renderer processes to use
 
@@ -27,9 +27,9 @@ contextBridge.exposeInMainWorld("dropdown", {
   show: () => ipcRenderer.invoke("dropdown:show"),
   hide: () => ipcRenderer.invoke("dropdown:hide"),
   visible: () => ipcRenderer.invoke("dropdown:visible"),
-  sendOptions: (options: ModelsTimeEntry[]) =>
+  sendOptions: (options: TimeEntry[]) =>
     ipcRenderer.invoke("dropdown:sendOptions", options),
-  onOptionsReceive: (callback: (options: ModelsTimeEntry[]) => void) => {
+  onOptionsReceive: (callback: (options: TimeEntry[]) => void) => {
     ipcRenderer.on("options", (_, options) => callback(options));
   },
   sendTabPress: () => ipcRenderer.send("dropdown:tabPress"),

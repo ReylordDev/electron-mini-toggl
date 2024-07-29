@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 let togglApiKey: string;
-let defaultWorkspaceId: string;
+let defaultWorkspaceId: string; // default workspace id for the time entries
 let workspaceUrl: string;
 let headers: Record<string, string>;
 const baseUrl = "https://api.track.toggl.com/api/v9";
@@ -23,15 +23,18 @@ app.whenReady().then(() => {
     );
     if (!fs.existsSync(settingsPath)) {
       // create settings file
-      const settingsContent = `[Settings]\n;These variables need to be set. Restart the application afterwards.\n; example: TOGGL_API_KEY=1234567890abcdef1234567890abcdef\nTOGGL_API_KEY=\nTOGGL_WORKSPACE_ID=\n`;
+      const settingsContent = `[Settings]\n;These variables need to be set. Restart the application afterwards (right-click).\n; example: TOGGL_API_KEY=1234567890abcdef1234567890abcdef\nTOGGL_API_KEY=\nTOGGL_WORKSPACE_ID=\n`;
       fs.writeFileSync(settingsPath, settingsContent, "utf-8");
     }
+
+    // read settings file
     fs.readFile(settingsPath, "utf-8", (err, settingsString) => {
       if (err) {
         console.error(err);
         return;
       }
       settingsString.split("\n").forEach((line) => {
+        // read key-value pairs from settings file
         const [key, value] = line.split("=");
         if (key === "TOGGL_API_KEY") {
           togglApiKey = value.trim();
@@ -39,6 +42,8 @@ app.whenReady().then(() => {
           defaultWorkspaceId = value.trim();
         }
       });
+
+      // create a notification if settings are not set
       const messages = [];
       if (!togglApiKey) {
         messages.push("Toggl API Key not set");
@@ -55,6 +60,7 @@ app.whenReady().then(() => {
         shell.openPath(settingsPath);
       }
 
+      // set headers and workspace url for the requests
       const encodedApiKey = Buffer.from(`${togglApiKey}:api_token`).toString(
         "base64",
       );
@@ -65,6 +71,8 @@ app.whenReady().then(() => {
       };
     });
   } else {
+    // environment variables are already set (development)
+    // set headers and workspace url for the requests
     const encodedApiKey = Buffer.from(`${togglApiKey}:api_token`).toString(
       "base64",
     );
@@ -76,13 +84,13 @@ app.whenReady().then(() => {
   }
 });
 
-export interface ModelsTimeEntrySharedWith {
+export interface TimeEntrySharedWith {
   accepted?: boolean;
   user_id?: number;
   user_name?: string;
 }
 
-export interface ModelsTimeEntry {
+export interface TimeEntry {
   /** When was last updated */
   at?: string;
   /** Whether the time entry is marked as billable */
@@ -110,9 +118,9 @@ export interface ModelsTimeEntry {
   /**
    * Custom Type, Added by me.
    */
-  project?: ModelsProject;
+  project?: Project;
   /** Indicates who the time entry has been shared with */
-  shared_with?: ModelsTimeEntrySharedWith[];
+  shared_with?: TimeEntrySharedWith[];
   /** Start time in UTC */
   start?: string;
   /** Stop time in UTC, can be null if it's still running or created with "duration" and "duronly" fields */
@@ -138,7 +146,7 @@ export interface ModelsTimeEntry {
   workspace_id?: number;
 }
 
-export interface ModelsProject {
+export interface Project {
   /** Whether the project is active or archived */
   active?: boolean;
   /** Actual hours */
@@ -207,9 +215,17 @@ export interface ModelsProject {
   workspace_id?: number;
 }
 
-function parseTimeEntry(data: string): ModelsTimeEntry {
+/**
+ * Parses a string representation of a time entry into a TimeEntry object.
+ * If the time entry is ongoing, the duration is calculated based on the start time and the current time.
+ * @param data - The string representation of the time entry.
+ * @returns The parsed TimeEntry object, or null if parsing fails.
+ */
+function parseTimeEntry(data: string): TimeEntry {
   try {
-    const timeEntry: ModelsTimeEntry = JSON.parse(data);
+    const timeEntry: TimeEntry = JSON.parse(data);
+    // For ongoing time entries, the duration is set to -1
+    // Calculate the duration based on the start time and the current time
     if (timeEntry.duration < 0) {
       const currentTime = new Date().toISOString();
       const startTime = timeEntry.start;
@@ -227,7 +243,13 @@ function parseTimeEntry(data: string): ModelsTimeEntry {
   }
 }
 
-function parseProjects(data: string): ModelsProject[] {
+/**
+ * Parses the given data string and returns an array of projects.
+ *
+ * @param data - The data string to parse.
+ * @returns An array of projects.
+ */
+function parseProjects(data: string): Project[] {
   let result;
   try {
     result = JSON.parse(data);
@@ -242,11 +264,10 @@ function parseProjects(data: string): ModelsProject[] {
  * Retrieves the current time entry from the Toggl API.
  * @returns A Promise that resolves to the current time entry (ModelsTimeEntry) or null if there is no current time entry.
  */
-export function getCurrentTimeEntry(): Promise<ModelsTimeEntry | null> {
+export function getCurrentTimeEntry(): Promise<TimeEntry | null> {
   return new Promise((resolve, reject) => {
     console.info("Fetching current time entry");
     console.info(`method: GET, url: ${baseUrl}/me/time_entries/current`);
-    console.info(`headers: ${JSON.stringify(headers)}`);
     const request = net.request({
       method: "GET",
       url: `${baseUrl}/me/time_entries/current`,
@@ -274,11 +295,14 @@ export function getCurrentTimeEntry(): Promise<ModelsTimeEntry | null> {
   });
 }
 
-export function getProjects(): Promise<ModelsProject[]> {
+/**
+ * Fetches projects from the workspace.
+ * @returns A promise that resolves to an array of projects.
+ */
+export function getProjects(): Promise<Project[]> {
   return new Promise((resolve, reject) => {
     console.log("Fetching projects");
     console.log(`method: GET, url: ${workspaceUrl}/projects`);
-    console.log(`headers: ${JSON.stringify(headers)}`);
     const request = net.request({
       method: "GET",
       url: `${workspaceUrl}/projects`,
@@ -302,6 +326,11 @@ export function getProjects(): Promise<ModelsProject[]> {
   });
 }
 
+/**
+ * Stops the current time entry.
+ * If there is no current time entry, the function resolves immediately.
+ * @returns A promise that resolves when the current time entry is stopped.
+ */
 export function stopCurrentTimeEntry(): Promise<void> {
   return new Promise((resolve, reject) => {
     getCurrentTimeEntry().then((timeEntry) => {
@@ -313,7 +342,6 @@ export function stopCurrentTimeEntry(): Promise<void> {
       }
       const url = `${workspaceUrl}/time_entries/${timeEntry.id}/stop`;
       console.log(`method: PUT, url: ${url}`);
-      console.log(`headers: ${JSON.stringify(headers)}`);
       const request = net.request({
         method: "PATCH",
         url,
@@ -331,10 +359,17 @@ export function stopCurrentTimeEntry(): Promise<void> {
   });
 }
 
+/**
+ * Retrieves time entries between the specified start and end dates.
+ *
+ * @param startDate - The start date of the time entries.
+ * @param endDate - The end date of the time entries.
+ * @returns A promise that resolves to an array of time entries.
+ */
 export function getTimeEntries(
   startDate: Date,
   endDate: Date,
-): Promise<ModelsTimeEntry[]> {
+): Promise<TimeEntry[]> {
   return new Promise((resolve, reject) => {
     console.log("Fetching time entries");
     console.log(
@@ -342,7 +377,6 @@ export function getTimeEntries(
     );
     const url = `${baseUrl}/me/time_entries?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`;
     console.log(`method: GET, url: ${url}`);
-    console.log(`headers: ${JSON.stringify(headers)}`);
     const request = net.request({
       method: "GET",
       url,
@@ -358,7 +392,7 @@ export function getTimeEntries(
         // TODO: Implement pagination
         // TODO: add better parsing
         try {
-          const timeEntries: ModelsTimeEntry[] = JSON.parse(data);
+          const timeEntries: TimeEntry[] = JSON.parse(data);
           resolve(timeEntries);
         } catch (error) {
           console.error(error);
@@ -374,7 +408,13 @@ export function getTimeEntries(
   });
 }
 
-export function getAllEntries(): Promise<ModelsTimeEntry[]> {
+/**
+ * Retrieves all time entries of the last 3 months, which is the maximum age allowed by Toggl.
+ * @returns A Promise that resolves to an array of TimeEntry objects.
+ */
+export function getAllEntries(): Promise<TimeEntry[]> {
+  // Why don't we just fetch all time entries in one go? - I don't know.
+  // TODO: Explore fetching all time entries in one go.
   return new Promise((resolve, reject) => {
     console.log("Fetching all time entries");
     const currentDate = new Date();
@@ -415,6 +455,12 @@ export function getAllEntries(): Promise<ModelsTimeEntry[]> {
   });
 }
 
+/**
+ * Starts a time entry with the given description and optional project ID.
+ * @param description - The description of the time entry.
+ * @param projectId - The ID of the project (optional, otherwise no project).
+ * @returns A Promise that resolves when the time entry is started.
+ */
 export function startEntry(
   description: string,
   projectId?: number,
@@ -425,11 +471,11 @@ export function startEntry(
     const url = `${workspaceUrl}/time_entries`;
     const initialBody = {
       description,
-      created_with: "toggl-electron",
+      created_with: "electron-mini-toggl",
       start: new Date().toISOString(),
       workspace_id: Number(defaultWorkspaceId),
       duration: -1,
-      tags: ["mini-player"],
+      tags: ["mini-player"], // tag entries created by the mini player
     };
     let bodyObj;
     if (projectId) {
@@ -438,12 +484,7 @@ export function startEntry(
       bodyObj = initialBody;
     }
     const body = JSON.stringify(bodyObj);
-    const updatedHeaders = {
-      ...headers,
-      "Content-Length": Buffer.byteLength(body).toString(),
-    };
     console.log(`method: POST, url: ${url}`);
-    console.log(`headers: ${JSON.stringify(updatedHeaders)}`);
     const request = net.request({
       method: "POST",
       url,

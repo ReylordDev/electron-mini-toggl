@@ -1,4 +1,4 @@
-import { ModelsTimeEntry } from "../src/toggl";
+import { TimeEntry } from "../src/toggl";
 
 /**
  * This is the dropdown-window renderer file.
@@ -12,7 +12,7 @@ const listElement = document.getElementById("time-entries-list");
  * @param timeEntry The time entry which has the description and project information.
  * @returns The list item element.
  */
-function createListItem(timeEntry: ModelsTimeEntry) {
+function createListItem(timeEntry: TimeEntry) {
   const li = document.createElement("li");
   li.classList.add(
     "p-2",
