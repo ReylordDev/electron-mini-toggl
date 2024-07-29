@@ -1,0 +1,44 @@
+{
+  "name": "electron-mini-toggl",
+  "productName": "electron-mini-toggl",
+  "version": "0.0.1",
+  "description": "An Electron mini-player for Toggl",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && electron-builder",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder",
+    "lint": "eslint --ext .ts,.tsx .",
+    "tailwind-watcher": "tailwindcss -i ./src/style/index.css -o ./src/style/output.css --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "electron": "31.2.1",
+    "electron-builder": "25.0.2",
+    "electron-builder-squirrel-windows": "25.0.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "tailwindcss": "^3.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "~4.5.4",
+    "vite": "^5.3.4",
+    "vite-plugin-electron": "^0.28.7",
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-plugin-multiple": "^0.2.0"
+  },
+  "keywords": [],
+  "author": "ReylordDev <98845999+ReylordDev@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "electron-squirrel-startup": "^1.0.1"
+  },
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+}
