@@ -11,6 +11,7 @@ let currentProject: Project = null;
 let allProjects: Project[] = []; // List used for getting the project names by id
 const previousEntries: TimeEntry[] = []; // List used for the dropdown
 
+const mainContainer = document.getElementById("main-container");
 const currentDisplayElement = document.getElementById("current-entry-display");
 const currentDescriptionElement = document.getElementById(
   "current-entry-description",
@@ -70,6 +71,8 @@ startButton.addEventListener("click", () => {
         .then(() => {
           inputElement.value = "";
           window.dropdown.hide();
+          mainContainer.classList.add("rounded-b-2xl");
+          mainContainer.classList.remove("border-b");
           update();
         })
         .catch((err) => {
@@ -87,6 +90,8 @@ startButton.addEventListener("click", () => {
       .then(() => {
         inputElement.value = "";
         window.dropdown.hide();
+        mainContainer.classList.add("rounded-b-2xl");
+        mainContainer.classList.remove("border-b");
         update();
       })
       .catch((err) => {
@@ -120,8 +125,12 @@ inputElement.addEventListener("input", () => {
   if (!input || input.length < 2) {
     // Hide the dropdown if the input is empty or too short
     window.dropdown.hide();
+    mainContainer.classList.add("rounded-b-2xl");
+    mainContainer.classList.remove("border-b");
     return;
   }
+  mainContainer.classList.remove("rounded-b-2xl");
+  mainContainer.classList.add("border-b");
   console.debug(`Input: ${input}`);
   const options = previousEntries.filter(
     (entry) =>
@@ -132,6 +141,7 @@ inputElement.addEventListener("input", () => {
   if (options.length === 0) {
     // Hide the dropdown if there are no options
     window.dropdown.hide();
+    mainContainer.classList.add("rounded-b-2xl");
     return;
   }
   // Find the project name for each option
