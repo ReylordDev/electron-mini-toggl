@@ -6,6 +6,7 @@ import { TimeEntry } from "../src/toggl";
 
 let selectedElement: HTMLLIElement = null; // The currently selected element
 const listElement = document.getElementById("time-entries-list");
+const selectedBackgroundColor = "bg-cyan-800";
 
 /**
  * Create a list item for the dropdown.
@@ -15,12 +16,15 @@ const listElement = document.getElementById("time-entries-list");
 function createListItem(timeEntry: TimeEntry) {
   const li = document.createElement("li");
   li.classList.add(
-    "p-2",
+    "flex",
+    "items-center",
+    "justify-center",
     "cursor-pointer",
-    "hover:border-2",
-    "rounded-lg",
     "w-full",
-    "h-10",
+    "h-14",
+    "rounded-xl",
+    "gap-1",
+    `hover:${selectedBackgroundColor}`,
   );
 
   const descriptionDisplay = document.createElement("span");
@@ -29,7 +33,7 @@ function createListItem(timeEntry: TimeEntry) {
 
   const projectDisplay = document.createElement("span");
   if (timeEntry.project) {
-    projectDisplay.innerText = " 🞄 " + timeEntry.project.name;
+    projectDisplay.innerText = "🞄 " + timeEntry.project.name;
     projectDisplay.style.color = timeEntry.project.color;
   }
   li.appendChild(projectDisplay);
@@ -68,10 +72,10 @@ window.dropdown.onOptionsReceive((options) => {
  */
 function updateSelection(newElement: HTMLLIElement) {
   if (selectedElement) {
-    selectedElement.classList.remove("border-2");
+    selectedElement.classList.remove(selectedBackgroundColor);
   }
   selectedElement = newElement;
-  selectedElement.classList.add("border-2");
+  selectedElement.classList.add(selectedBackgroundColor);
 }
 
 // When tab is first pressed, select the first option.

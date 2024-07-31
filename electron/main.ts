@@ -26,9 +26,9 @@ if (require("electron-squirrel-startup")) {
 }
 
 // Magical Constants
-const DROPDOWN_HEIGHT_PER_OPTION = 40; // px
-const DROPDOWN_BORDER_WIDTH = 2; // px
-const DROPDOWN_HEIGHT_LIMIT = 300; // px
+const DROPDOWN_HEIGHT_PER_OPTION = 58; // px
+const DROPDOWN_BORDER_WIDTH = 4; // px
+const DROPDOWN_HEIGHT_LIMIT = 400; // px
 
 function createWindow(
   source = "index",

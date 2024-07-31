@@ -17,6 +17,7 @@ const currentDescriptionElement = document.getElementById(
   "current-entry-description",
 );
 const currentProjectElement = document.getElementById("current-entry-project");
+const inputContainer = document.getElementById("new-entry-container");
 const inputElement: HTMLInputElement = document.getElementById(
   "new-entry-input",
 ) as HTMLInputElement;
@@ -142,6 +143,7 @@ inputElement.addEventListener("input", () => {
     // Hide the dropdown if there are no options
     window.dropdown.hide();
     mainContainer.classList.add("rounded-b-2xl");
+    mainContainer.classList.remove("border-b");
     return;
   }
   // Find the project name for each option
@@ -169,7 +171,7 @@ function update() {
       currentProject = null;
       currentDescriptionElement.innerText = "";
       currentDisplayElement.style.display = "none";
-      inputElement.style.display = "flex";
+      inputContainer.style.display = "flex";
       timerElement.style.display = "none";
       startButton.style.display = "flex";
       stopButton.style.display = "none";
@@ -191,7 +193,7 @@ function update() {
           : "";
         currentProjectElement.style.color = currentProject?.color || "white";
         currentDisplayElement.style.display = "flex";
-        inputElement.style.display = "none";
+        inputContainer.style.display = "none";
         inputElement.value = "";
         timerElement.style.display = "flex";
         timerElement.innerText = formatTime(timeEntry.duration);
