@@ -1,15 +1,6 @@
-import {
-  app,
-  BrowserWindow,
-  ipcMain,
-  Menu,
-  MenuItem,
-  Notification,
-  shell,
-} from "electron";
+import { app, BrowserWindow, ipcMain, Menu, MenuItem } from "electron";
 import path from "path";
 import "dotenv/config";
-import fs from "fs";
 
 import {
   getCurrentTimeEntry,
@@ -27,7 +18,7 @@ if (require("electron-squirrel-startup")) {
 
 // Magical Constants
 const DROPDOWN_HEIGHT_PER_OPTION = 58; // px
-const DROPDOWN_BORDER_WIDTH = 4; // px
+const DROPDOWN_PADDING = 4; // px
 const DROPDOWN_HEIGHT_LIMIT = 400; // px
 
 function createWindow(
@@ -50,6 +41,7 @@ function createWindow(
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      spellcheck: false,
     },
   };
   const options = Object.assign(defaultOptions, optionOverrides);
@@ -100,6 +92,16 @@ app.whenReady().then(() => {
     minHeight: 0,
   });
 
+  mainWindow.on("move", () => {
+    // Always show dropdown below the main window
+    const mainWindowBounds = mainWindow.getBounds();
+    dropdownWindow.setBounds({
+      x: mainWindowBounds.x,
+      y: mainWindowBounds.y + mainWindowBounds.height,
+      width: mainWindowBounds.width,
+    });
+  });
+
   // Handle IPC events
 
   // Toggl API
@@ -123,17 +125,7 @@ app.whenReady().then(() => {
   );
 
   // Dropdown window
-  ipcMain.handle("dropdown:toggle", async () =>
-    dropdownWindow.isVisible() ? dropdownWindow.hide() : dropdownWindow.show(),
-  );
   ipcMain.handle("dropdown:show", async () => {
-    // Always show dropdown below the main window
-    const mainWindowBounds = mainWindow.getBounds();
-    dropdownWindow.setBounds({
-      x: mainWindowBounds.x,
-      y: mainWindowBounds.y + mainWindowBounds.height,
-      width: mainWindowBounds.width,
-    });
     dropdownWindow.show();
     // return the focus to the main window to allow the user
     // to continue typing without interruption
@@ -145,7 +137,7 @@ app.whenReady().then(() => {
     // Route time entry options to the dropdown window
     // Also adjust the height of the dropdown window based on the number of options
     let height =
-      options.length * DROPDOWN_HEIGHT_PER_OPTION + 2 * DROPDOWN_BORDER_WIDTH;
+      options.length * DROPDOWN_HEIGHT_PER_OPTION + 2 * DROPDOWN_PADDING;
     if (height > DROPDOWN_HEIGHT_LIMIT) height = DROPDOWN_HEIGHT_LIMIT;
     dropdownWindow.setBounds({
       height,

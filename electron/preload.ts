@@ -23,7 +23,6 @@ contextBridge.exposeInMainWorld("togglApi", {
 });
 
 contextBridge.exposeInMainWorld("dropdown", {
-  toggle: () => ipcRenderer.invoke("dropdown:toggle"),
   show: () => ipcRenderer.invoke("dropdown:show"),
   hide: () => ipcRenderer.invoke("dropdown:hide"),
   visible: () => ipcRenderer.invoke("dropdown:visible"),

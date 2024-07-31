@@ -49,6 +49,8 @@ window.addEventListener("auxclick", (event) => {
 
 window.mainWindow.onUpdateRequestReceive(() => {
   console.log("Update request received");
+  mainContainer.classList.add("rounded-b-2xl");
+  mainContainer.classList.remove("border-b");
   update();
 });
 
@@ -155,7 +157,6 @@ inputElement.addEventListener("input", () => {
 
   // Send the options to the dropdown
   window.dropdown.sendOptions(options);
-  window.dropdown.show();
 });
 
 /**

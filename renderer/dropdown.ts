@@ -46,7 +46,6 @@ function createListItem(timeEntry: TimeEntry) {
       .then(() => {
         console.log("Entry started");
         window.dropdown.hide();
-        // TODO: add rounded-b-2xl to mainContainer
         window.mainWindow.sendUpdateRequest();
       })
       .catch((err) => {
@@ -64,6 +63,7 @@ window.dropdown.onOptionsReceive((options) => {
     const li = createListItem(option);
     listElement.appendChild(li);
   });
+  window.dropdown.show();
 });
 
 /**

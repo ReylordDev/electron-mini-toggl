@@ -20,7 +20,6 @@ declare global {
       startEntry: typeof startEntry;
     };
     dropdown: {
-      toggle: () => void;
       show: () => void;
       hide: () => void;
       visible: () => Promise<boolean>;
