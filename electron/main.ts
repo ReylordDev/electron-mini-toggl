@@ -80,6 +80,19 @@ app.on("activate", () => {
   }
 });
 
+function moveDropdown(
+  mainWindow: BrowserWindow,
+  dropdownWindow: BrowserWindow,
+) {
+  // Always show dropdown below the main window
+  const mainWindowBounds = mainWindow.getBounds();
+  dropdownWindow.setBounds({
+    x: mainWindowBounds.x,
+    y: mainWindowBounds.y + mainWindowBounds.height,
+    width: mainWindowBounds.width,
+  });
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -91,15 +104,10 @@ app.whenReady().then(() => {
     movable: false,
     minHeight: 0,
   });
+  moveDropdown(mainWindow, dropdownWindow);
 
   mainWindow.on("move", () => {
-    // Always show dropdown below the main window
-    const mainWindowBounds = mainWindow.getBounds();
-    dropdownWindow.setBounds({
-      x: mainWindowBounds.x,
-      y: mainWindowBounds.y + mainWindowBounds.height,
-      width: mainWindowBounds.width,
-    });
+    moveDropdown(mainWindow, dropdownWindow);
   });
 
   // Handle IPC events
