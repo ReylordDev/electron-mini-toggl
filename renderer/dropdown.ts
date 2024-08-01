@@ -7,7 +7,7 @@ import { TimeEntry } from "../src/toggl.js";
 
 let selectedElement: HTMLLIElement = undefined; // The currently selected element
 const listElement = document.getElementById("time-entries-list");
-const selectedBackgroundColor = "bg-cyan-800";
+const selectedBackgroundColor = "bg-cyan-900";
 
 /**
  * Create a list item for the dropdown.
@@ -25,7 +25,6 @@ function createListItem(timeEntry: TimeEntry) {
     "h-14",
     "rounded-xl",
     "gap-1",
-    `hover:${selectedBackgroundColor}`,
   );
 
   const descriptionDisplay = document.createElement("span");
@@ -36,6 +35,7 @@ function createListItem(timeEntry: TimeEntry) {
   if (timeEntry.project) {
     projectDisplay.innerText = "🞄 " + timeEntry.project.name;
     projectDisplay.style.color = timeEntry.project.color;
+    projectDisplay.classList.add("mix-blend-plus-lighter");
   }
   li.appendChild(projectDisplay);
 
@@ -52,6 +52,10 @@ function createListItem(timeEntry: TimeEntry) {
       .catch((err) => {
         console.error(err);
       });
+  });
+
+  li.addEventListener("mouseenter", () => {
+    updateSelection(li);
   });
   return li;
 }
