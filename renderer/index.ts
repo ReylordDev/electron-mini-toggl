@@ -1,4 +1,5 @@
-import { TimeEntry, Project } from "../src/toggl";
+// eslint-disable-next-line import/no-unresolved
+import { TimeEntry, Project } from "../src/toggl.js";
 
 /**
  * This is the main-window renderer file.
@@ -6,8 +7,8 @@ import { TimeEntry, Project } from "../src/toggl";
 
 const timeEntryUpdateInterval = 5000; // Update the current time entry every 5 seconds
 let seconds = 0;
-let currentEntry: TimeEntry = null;
-let currentProject: Project = null;
+let currentEntry: TimeEntry | undefined = undefined;
+let currentProject: Project | undefined = undefined;
 let allProjects: Project[] = []; // List used for getting the project names by id
 const previousEntries: TimeEntry[] = []; // List used for the dropdown
 
@@ -78,7 +79,7 @@ startButton.addEventListener("click", () => {
           mainContainer.classList.remove("border-b");
           update();
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           console.error(err);
         });
     } else {
@@ -97,7 +98,7 @@ startButton.addEventListener("click", () => {
         mainContainer.classList.remove("border-b");
         update();
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error(err);
       });
   }
@@ -111,8 +112,8 @@ stopButton.addEventListener("click", () => {
       // Stop the current time entry and refresh the window
       .stopCurrentTimeEntry()
       .then(() => {
-        currentEntry = null;
-        currentProject = null;
+        currentEntry = undefined;
+        currentProject = undefined;
         console.log("Time entry stopped");
         update();
       })
@@ -168,8 +169,8 @@ function update() {
   window.togglApi.getCurrentTimeEntry().then((timeEntry) => {
     if (!timeEntry) {
       console.log("No time entry running");
-      currentEntry = null;
-      currentProject = null;
+      currentEntry = undefined;
+      currentProject = undefined;
       currentDescriptionElement.innerText = "";
       currentDisplayElement.style.display = "none";
       inputContainer.style.display = "flex";

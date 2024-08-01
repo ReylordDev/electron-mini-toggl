@@ -5,12 +5,11 @@ import {
   getAllEntries,
   getTimeEntries,
   startEntry,
-  // eslint-disable-next-line import/no-unresolved
-} from "src/toggl";
+} from "../../src/toggl.js";
 
 declare global {
   interface Window {
-    // For some reason typeof hides the possible null return type
+    // For some reason typeof hides the possible undefined return type
     togglApi: {
       getCurrentTimeEntry: typeof getCurrentTimeEntry;
       stopCurrentTimeEntry: typeof stopCurrentTimeEntry;

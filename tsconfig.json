@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "module": "ESNext",
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
     "outDir": "dist",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "."
+    "module": "node16",
+    "moduleResolution": "node16",
+    "moduleDetection": "force",
+    "target": "ES2023",
+    "resolveJsonModule": false,
+    "declaration": true,
+    // "strict": true,
+    // "noImplicitAny": true,
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true,
+    "experimentalResolver": true
   }
 }

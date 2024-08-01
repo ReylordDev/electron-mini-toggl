@@ -1,12 +1,11 @@
 import fs from "node:fs";
-import path from "node:path";
 import { defineConfig } from "vite";
-// eslint-disable-next-line import/no-unresolved
 import electron from "vite-plugin-electron/simple";
 import multiple from "vite-plugin-multiple";
+import { fileURLToPath } from "node:url";
 
 export default defineConfig(() => {
-  fs.rmSync(path.join(__dirname, "dist-electron"), {
+  fs.rmSync(new URL("dist-electron", import.meta.url), {
     recursive: true,
     force: true,
   });
@@ -18,7 +17,7 @@ export default defineConfig(() => {
           entry: "electron/main.ts",
         },
         preload: {
-          input: path.join(__dirname, "electron/preload.ts"),
+          input: "electron/preload.ts",
         },
       }),
       multiple([
@@ -30,7 +29,7 @@ export default defineConfig(() => {
     ],
     build: {
       rollupOptions: {
-        input: path.join(__dirname, "html/index.html"),
+        input: fileURLToPath(new URL("html/index.html", import.meta.url)),
       },
     },
   };

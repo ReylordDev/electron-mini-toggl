@@ -1,6 +1,6 @@
-import path from "node:path";
 import { defineConfig } from "vite";
 import renderer from "vite-plugin-electron-renderer";
+import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   plugins: [renderer()],
@@ -9,7 +9,7 @@ export default defineConfig({
     emptyOutDir: false,
     minify: false,
     rollupOptions: {
-      input: path.join(__dirname, "html/dropdown.html"),
+      input: fileURLToPath(new URL("html/dropdown.html", import.meta.url)),
     },
   },
 });

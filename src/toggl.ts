@@ -1,7 +1,7 @@
 import { net, Notification, app, shell } from "electron";
 import "dotenv/config";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 let togglApiKey: string;
 let defaultWorkspaceId: string; // default workspace id for the time entries
@@ -97,8 +97,8 @@ export interface TimeEntry {
   billable?: boolean;
   /** Related entities meta fields - if requested */
   client_name?: string;
-  /** Time Entry description, null if not provided at creation/update */
-  description?: string | null;
+  /** Time Entry description, undefined if not provided at creation/update */
+  description?: string | undefined;
   /** Time entry duration. For running entries should be negative, preferable -1 */
   duration?: number;
   /** Used to create a TE with a duration but without a stop time, this field is deprecated for GET endpoints where the value will always be true. */
@@ -112,8 +112,8 @@ export interface TimeEntry {
   project_active?: boolean;
   project_billable?: boolean;
   project_color?: string;
-  /** Project ID. Can be null if project was not provided or project was later deleted */
-  project_id?: number | null;
+  /** Project ID. Can be undefined if project was not provided or project was later deleted */
+  project_id?: number | undefined;
   project_name?: string;
   /**
    * Custom Type, Added by me.
@@ -123,14 +123,14 @@ export interface TimeEntry {
   shared_with?: TimeEntrySharedWith[];
   /** Start time in UTC */
   start?: string;
-  /** Stop time in UTC, can be null if it's still running or created with "duration" and "duronly" fields */
+  /** Stop time in UTC, can be undefined if it's still running or created with "duration" and "duronly" fields */
   stop?: string;
-  /** Tag IDs, null if tags were not provided or were later deleted */
+  /** Tag IDs, undefined if tags were not provided or were later deleted */
   tag_ids?: number[];
-  /** Tag names, null if tags were not provided or were later deleted */
+  /** Tag names, undefined if tags were not provided or were later deleted */
   tags?: string[];
-  /** Task ID. Can be null if task was not provided or project was later deleted */
-  task_id?: number | null;
+  /** Task ID. Can be undefined if task was not provided or project was later deleted */
+  task_id?: number | undefined;
   task_name?: string;
   /** Task ID, legacy field */
   tid?: number;
@@ -150,34 +150,34 @@ export interface Project {
   /** Whether the project is active or archived */
   active?: boolean;
   /** Actual hours */
-  actual_hours?: number | null;
+  actual_hours?: number | undefined;
   /** Actual seconds */
-  actual_seconds?: number | null;
+  actual_seconds?: number | undefined;
   /** Last updated date */
   at?: string;
   /** Whether estimates are based on task hours, premium feature */
-  auto_estimates?: boolean | null;
+  auto_estimates?: boolean | undefined;
   /** Whether the project is billable, premium feature */
-  billable?: boolean | null;
+  billable?: boolean | undefined;
   can_track_time?: boolean;
   /** Client ID legacy field */
   cid?: number;
   /** Client ID */
-  client_id?: number | null;
+  client_id?: number | undefined;
   /** Color */
   color?: string;
   /** Creation date */
   created_at?: string;
   /** Currency, premium feature */
-  currency?: string | null;
+  currency?: string | undefined;
   /** Current project period, premium feature */
   // current_period?: ModelsRecurringPeriod;
   /** End date */
   end_date?: string;
   /** Estimated hours */
-  estimated_hours?: number | null;
+  estimated_hours?: number | undefined;
   /** Estimated seconds */
-  estimated_seconds?: number | null;
+  estimated_seconds?: number | undefined;
   /** Fixed fee, premium feature */
   fixed_fee?: number;
   /** Project ID */
@@ -194,7 +194,7 @@ export interface Project {
   /** Hourly rate */
   rate?: number;
   /** Last date for rate change */
-  rate_last_updated?: string | null;
+  rate_last_updated?: string | undefined;
   /** Whether the project is recurring, premium feature */
   recurring?: boolean;
   /** Project recurring parameters, premium feature */
@@ -206,9 +206,9 @@ export interface Project {
   /** Status of the project (upcoming, active, ended, archived, deleted) */
   status?: string;
   /** Whether the project is used as template, premium feature */
-  template?: boolean | null;
+  template?: boolean | undefined;
   /** Template ID */
-  template_id?: number | null;
+  template_id?: number | undefined;
   /** Workspace ID legacy field */
   wid?: number;
   /** Workspace ID */
@@ -219,7 +219,7 @@ export interface Project {
  * Parses a string representation of a time entry into a TimeEntry object.
  * If the time entry is ongoing, the duration is calculated based on the start time and the current time.
  * @param data - The string representation of the time entry.
- * @returns The parsed TimeEntry object, or null if parsing fails.
+ * @returns The parsed TimeEntry object, or undefined if parsing fails.
  */
 function parseTimeEntry(data: string): TimeEntry {
   try {
@@ -239,7 +239,7 @@ function parseTimeEntry(data: string): TimeEntry {
   } catch (error) {
     console.error(error);
     console.log(data);
-    return null;
+    return undefined;
   }
 }
 
@@ -262,9 +262,9 @@ function parseProjects(data: string): Project[] {
 
 /**
  * Retrieves the current time entry from the Toggl API.
- * @returns A Promise that resolves to the current time entry (ModelsTimeEntry) or null if there is no current time entry.
+ * @returns A Promise that resolves to the current time entry (ModelsTimeEntry) or undefined if there is no current time entry.
  */
-export function getCurrentTimeEntry(): Promise<TimeEntry | null> {
+export function getCurrentTimeEntry(): Promise<TimeEntry | undefined> {
   return new Promise((resolve, reject) => {
     console.info("Fetching current time entry");
     console.info(`method: GET, url: ${baseUrl}/me/time_entries/current`);

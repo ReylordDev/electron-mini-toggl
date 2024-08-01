@@ -1,10 +1,11 @@
-import { TimeEntry } from "../src/toggl";
+// eslint-disable-next-line import/no-unresolved
+import { TimeEntry } from "../src/toggl.js";
 
 /**
  * This is the dropdown-window renderer file.
  */
 
-let selectedElement: HTMLLIElement = null; // The currently selected element
+let selectedElement: HTMLLIElement = undefined; // The currently selected element
 const listElement = document.getElementById("time-entries-list");
 const selectedBackgroundColor = "bg-cyan-800";
 

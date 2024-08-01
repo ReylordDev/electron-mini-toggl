@@ -1,6 +1,8 @@
 import { app, BrowserWindow, ipcMain, Menu, MenuItem } from "electron";
-import path from "path";
+import path from "node:path";
 import "dotenv/config";
+import squirrel from "electron-squirrel-startup";
+import { fileURLToPath } from "node:url";
 
 import {
   getCurrentTimeEntry,
@@ -9,7 +11,8 @@ import {
   getAllEntries,
   getTimeEntries,
   startEntry,
-} from "../src/toggl";
+  // eslint-disable-next-line import/no-unresolved
+} from "../src/toggl.js";
 
 let mainWindow: BrowserWindow;
 
@@ -27,7 +30,7 @@ if (!gotTheLock) {
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("electron-squirrel-startup")) {
+if (squirrel) {
   app.quit();
 }
 
@@ -55,7 +58,7 @@ function createWindow(
     transparent: true,
     resizable: false,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: fileURLToPath(new URL("preload.mjs", import.meta.url)),
       spellcheck: false,
     },
   };
@@ -69,7 +72,9 @@ function createWindow(
     );
   } else {
     // Production
-    window.loadFile(path.join(__dirname, `../dist/html/${source}.html`));
+    window.loadFile(
+      fileURLToPath(new URL(`../dist/html/${source}.html`, import.meta.url)),
+    );
   }
 
   if (devTools) {

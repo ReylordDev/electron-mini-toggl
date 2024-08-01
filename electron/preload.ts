@@ -2,7 +2,8 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from "electron";
-import { TimeEntry } from "../src/toggl";
+// eslint-disable-next-line import/no-unresolved
+import { TimeEntry } from "../src/toggl.js";
 
 // Expose protected methods that allow the renderer processes to use
 
@@ -18,7 +19,7 @@ contextBridge.exposeInMainWorld("togglApi", {
   getTimeEntries: (startDate: Date, endDate: Date) =>
     ipcRenderer.invoke("toggl:getTimeEntries", startDate, endDate),
   getAllEntries: () => ipcRenderer.invoke("toggl:getAllEntries"),
-  startEntry: (description: string, projectId: number | null) =>
+  startEntry: (description: string, projectId: number | undefined) =>
     ipcRenderer.invoke("toggl:startEntry", description, projectId),
 });
 

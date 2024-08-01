@@ -3,7 +3,12 @@
   "productName": "electron-mini-toggl",
   "version": "0.0.1",
   "description": "Toggl Mini Player",
+  "exports": "./dist-electron/main.js",
   "main": "dist-electron/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build && electron-builder",
@@ -13,6 +18,7 @@
     "tailwind-watcher": "tailwindcss -i ./src/style/index.css -o ./src/style/output.css --watch"
   },
   "devDependencies": {
+    "@types/electron-squirrel-startup": "^1.0.2",
     "@types/node": "^20.14.11",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -26,7 +32,7 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4",
+    "typescript": "^5.5.4",
     "vite": "^5.3.4",
     "vite-plugin-electron": "^0.28.7",
     "vite-plugin-electron-renderer": "^0.14.5",
