@@ -5,6 +5,8 @@ import squirrel from "electron-squirrel-startup";
 import { fileURLToPath } from "node:url";
 import Store from "electron-store";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 import {
   getCurrentTimeEntry,
   getProjects,
@@ -58,7 +60,7 @@ function createWindow(
     transparent: true,
     resizable: false,
     webPreferences: {
-      preload: fileURLToPath(new URL("preload.mjs", import.meta.url)),
+      preload: path.join(__dirname, "preload.mjs"),
       spellcheck: false,
     },
   };
@@ -72,9 +74,7 @@ function createWindow(
     );
   } else {
     // Production
-    window.loadFile(
-      fileURLToPath(new URL(`../dist/html/${source}.html`, import.meta.url)),
-    );
+    window.loadFile(path.join(__dirname, `../dist/html/${source}.html`));
   }
 
   if (devTools) {
