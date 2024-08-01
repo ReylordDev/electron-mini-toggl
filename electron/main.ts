@@ -3,6 +3,7 @@ import path from "node:path";
 import "dotenv/config";
 import squirrel from "electron-squirrel-startup";
 import { fileURLToPath } from "node:url";
+import Store from "electron-store";
 
 import {
   getCurrentTimeEntry,
@@ -17,6 +18,7 @@ import {
 let mainWindow: BrowserWindow;
 
 const gotTheLock = app.requestSingleInstanceLock();
+const store = new Store();
 
 if (!gotTheLock) {
   app.quit();
@@ -47,8 +49,6 @@ function createWindow(
   const defaultOptions = {
     darkTheme: true,
     frame: false,
-    x: 3050,
-    y: 10,
     width: 400,
     height: 110,
     minHeight: 100,
@@ -128,6 +128,11 @@ app.whenReady().then(() => {
 
   mainWindow.on("move", () => {
     moveDropdown(mainWindow, dropdownWindow);
+  });
+  mainWindow.setBounds(store.get("mainWindowBounds"));
+
+  mainWindow.on("close", () => {
+    store.set("mainWindowBounds", mainWindow.getBounds());
   });
 
   // Handle IPC events
